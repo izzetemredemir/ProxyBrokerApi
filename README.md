@@ -1,5 +1,5 @@
 # ProxyBrokerApi
-ProxyBrokeApi is an api service for ProxyBroker. It provides checked http-https proxies. It returns every time different proxy 
+ProxyBrokerApi is an api service for ProxyBroker. It provides checked http-https proxies. It returns every time different proxy 
 and keeps them in used-proxies.txt It uses Python3.6 + ProxyBroker , Flast-restful api .
 
 ## Features
