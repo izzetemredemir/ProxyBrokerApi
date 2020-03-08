@@ -72,3 +72,5 @@ Bu api servisini localde kullanmak için tasarladım her birinde  farklı ip adr
 böyle bir api servisine ihtiyacınız olabilir. 
 
 
+### License
+Licensed under the Apache License, Version 2.0
