@@ -24,7 +24,11 @@ You can check their website for extra information  [proxybroker.readthedocs.io](
 ### Api Examples 
 
 #### Get a Proxy
+
 [ApiTester.py](https://github.com/izzetemredemir/ProxyBrokerApi/blob/master/example/ApiTester.py)
+| PATH    | Request Type| Post  |
+| :---         |     :---:      |          ---: |
+|/         | GET    |   |
 
 ```python
 import requests
@@ -40,6 +44,11 @@ This code will return an unique proxy or you can visit http://127.0.0.1:5000/  d
 #### Clear .txt files
 [ApiClearTester.py](https://github.com/izzetemredemir/ProxyBrokerApi/blob/master/example/ApiClearTester.py)
 
+| PATH    | Request Type| Post  |
+| :---         |     :---:      |          ---: |
+|/cmd          | POST     | {'clear': 'all'}   |
+|/cmd         | POST       | {'clear': 'used_proxies'}    |
+|/cmd         | POST       | {'clear': 'proxies'}   |
 ```python
 import requests
 
