@@ -72,7 +72,7 @@ ProxyBrokerApi ProxyBroker adlı aracı kullanarak her seferinde farklı ve kont
 Daha önceden kullandığı proxyleri used-proxies.txt de saklar yeni olanları ise proxies.txt de saklar.
 
 ProxyApi.py dosyasını çalıştırdığınız zaman Flask http://127.0.0.1:5000/ adresinden isteklerinize cevap verecektir.
-Direk http://127.0.0.1:5000/ e istek attığınızda size proxyi json formatında geri döner.
+Direkt http://127.0.0.1:5000/ e istek attığınızda size proxyi json formatında geri döner.
 
 Txt dosylarını bazen temizlemeniz gerekebilir bunu api üzerinden yapabilirsiniz bunun için  http://127.0.0.1:5000/cmd adresine 
 post olarak istek atmanız gerekiyor örneğin  command = {'clear': 'all'}  her iki dosyayıda temizler. 
