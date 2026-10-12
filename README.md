@@ -1,34 +1,27 @@
 # ProxyBrokerApi
-ProxyBrokerApi is an api service for ProxyBroker. It provides checked http-https proxies. It returns every time different proxy 
-and keeps them in used-proxies.txt It uses Python3.6 + ProxyBroker , Flast-restful api .
 
-## Features
-ProxyBrokerApi provides every-time different http-https proxy.
-This proxies are checked and fresh proxies are stored in proxies.txt 
-Used proxies are stored in used-proxies.txt .
-You can clear this txt files from api.
+A small local Flask API that hands out a different, checked HTTP or HTTPS proxy on every request. It uses [ProxyBroker](https://github.com/constverum/ProxyBroker) to find and check proxies from public sources, and is meant for setups where several local services each need a different IP address.
 
-## Requirements
+> **Status:** archived. Built in 2020. Kept for reference, not maintained.
 
-* Python 3.6+
+## What it does
 
-* [ProxyBroker](https://github.com/constverum/ProxyBroker)
+- Returns one proxy per request as JSON, for example `{"proxy": "http://203.0.113.10:8080"}`.
+- Never hands out the same proxy twice: each proxy it serves is removed from `proxies.txt` and recorded in `used-proxies.txt`.
+- When `proxies.txt` runs out, runs a new ProxyBroker search for HTTP and HTTPS proxies and refills the file. The search limit starts at 10 and grows by 100 before every refill.
+- Clears `proxies.txt`, `used-proxies.txt` or both through a command endpoint.
+- `ProxyService.py` also works on its own, without the API (see [example/ProxyServiceTester.py](example/ProxyServiceTester.py)).
 
-* Flask-RESTful
+## API
 
-## ProxyBroker 
-ProxyBroker is very useful tool .It finds and checks proxies from public pools. 
-You can check their website for extra information  [proxybroker.readthedocs.io](proxybroker.readthedocs.io)
+| Path   | Method      | Body                         | Description                                   |
+| ------ | ----------- | ---------------------------- | --------------------------------------------- |
+| `/`    | GET or POST |                              | Returns an unused proxy                       |
+| `/cmd` | POST        | `{"clear": "all"}`           | Clears `proxies.txt` and `used-proxies.txt`   |
+| `/cmd` | POST        | `{"clear": "proxies"}`       | Clears `proxies.txt`                          |
+| `/cmd` | POST        | `{"clear": "used_proxies"}`  | Clears `used-proxies.txt`                     |
 
-## Usage
-### Api Examples 
-
-#### Get a Proxy
-
-[ApiTester.py](https://github.com/izzetemredemir/ProxyBrokerApi/blob/master/example/ApiTester.py)
-| PATH    | Request Type| Post  |Desc  |
-| :---         |     :---:      |         :---:      | ---: |
-|/         | GET    |   |  Return a proxy |
+Get a proxy ([example/ApiTester.py](example/ApiTester.py)):
 
 ```python
 import requests
@@ -37,49 +30,47 @@ url = 'http://127.0.0.1:5000/'
 
 r = requests.post(url)
 
-print(r.text);
+print(r.text)
 ```
-This code will return an unique proxy or you can visit http://127.0.0.1:5000/  directly from browser.
 
-#### Clear .txt files
-[ApiClearTester.py](https://github.com/izzetemredemir/ProxyBrokerApi/blob/master/example/ApiClearTester.py)
+You can also open http://127.0.0.1:5000/ in a browser.
 
-| PATH    | Request Type| Post  | Desc  |
-| :---         |     :---:      |          :---:      |     ---: |
-|/cmd          | POST     | {'clear': 'all'}   | Clar all txt files|
-|/cmd         | POST       | {'clear': 'used_proxies'}    | clear used_proxies.txt|
-|/cmd         | POST       | {'clear': 'proxies'}   |clear  proxies.txt|
+Clear the files ([example/ApiClearTester.py](example/ApiClearTester.py)):
+
 ```python
 import requests
 
 url = 'http://127.0.0.1:5000/cmd'
 
-command = {'clear': 'all'} # It clears  used_prixies.txt and clears proxies.txt
-#command = {'clear': 'used_proxies'} #  It clears used_prixies.txt
-#command = {'clear': 'proxies'}      # It clears proxies.txt
+command = {'clear': 'all'}             # clears used-proxies.txt and proxies.txt
+# command = {'clear': 'used_proxies'}  # clears used-proxies.txt
+# command = {'clear': 'proxies'}       # clears proxies.txt
 
-x = requests.post(url, json = command)
+x = requests.post(url, json=command)
 
 print(x.text)
 ```
 
-ProxyBrokerApi uses txt files for stroing proxies. proxies.txt stores new proxies. used-proxies.txt stores used proxies.
-You can clear this txt files from api .
+## Tech stack
 
+- Python 3 (the original target was Python 3.6+)
+- Flask
+- [ProxyBroker](https://proxybroker.readthedocs.io) (asyncio based proxy finder and checker)
+- requests (examples only)
 
-# Türkçe
-ProxyBrokerApi ProxyBroker adlı aracı kullanarak her seferinde farklı ve kontrol edilmiş bir proxy veren bir araçtır. 
-Daha önceden kullandığı proxyleri used-proxies.txt de saklar yeni olanları ise proxies.txt de saklar.
+## Running it locally
 
-ProxyApi.py dosyasını çalıştırdığınız zaman Flask http://127.0.0.1:5000/ adresinden isteklerinize cevap verecektir.
-Direkt http://127.0.0.1:5000/ e istek attığınızda size proxyi json formatında geri döner.
+```bash
+pip install Flask proxybroker
+python ProxyApi.py
+```
 
-Txt dosylarını bazen temizlemeniz gerekebilir bunu api üzerinden yapabilirsiniz bunun için  http://127.0.0.1:5000/cmd adresine 
-post olarak istek atmanız gerekiyor örneğin  command = {'clear': 'all'}  her iki dosyayıda temizler. 
+The API answers on http://127.0.0.1:5000/. On startup it fetches one proxy, so with an empty `proxies.txt` it runs a ProxyBroker search before the server comes up.
 
-Bu api servisini localde kullanmak için tasarladım her birinde  farklı ip adresine ihtiyaç duyabileceğiniz birden fazla servisiniz var ise
-böyle bir api servisine ihtiyacınız olabilir. 
+- `requeriments.txt` is a full export of a 2020 Anaconda environment, not a minimal list. The code itself only imports Flask and ProxyBroker (plus requests in the examples).
+- The latest ProxyBroker release on PyPI (0.3.2, from 2019) lists Python 3.5 and 3.6 as supported, so a newer Python may need changes.
+- The app runs Flask with `debug=True`. Keep it on localhost.
 
+## License
 
-### License
-Licensed under the GPL 3.0
+GPL-3.0, see [LICENSE](LICENSE).
